@@ -6,11 +6,15 @@ import Card from "../components/Card";
 import Button from "../components/Button";
 import Input from "../components/Input";
 
+
 const fieldTypes: { value: FieldType; label: string; icon: string }[] = [
-  { value: "text", label: "Text Field", icon: "📝" },
+  { value: "text", label: "Text Field", icon: "✏️" },
+  { value: "number", label: "Number", icon: "🔢" },
   { value: "date", label: "Date Picker", icon: "📅" },
   { value: "signature", label: "Signature", icon: "✍️" },
-  { value: "checkbox", label: "Checkbox", icon: "✅" },
+  { value: "checkbox", label: "Checkbox", icon: "☑️" },
+  { value: "dropdown", label: "Dropdown", icon: "⬇️" },
+  { value: "textarea", label: "Text Area", icon: "📝" },
 ];
 
 export default function BlueprintsPage() {
@@ -22,25 +26,77 @@ export default function BlueprintsPage() {
   const [type, setType] = useState<FieldType>("text");
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
+  
+  // Additional state for field-specific settings
+  const [numberSettings, setNumberSettings] = useState({ min: 0, max: 100, step: 1 });
+  const [dateSettings, setDateSettings] = useState({ format: "MM/DD/YYYY", minDate: "", maxDate: "" });
+  const [dropdownOptions, setDropdownOptions] = useState<string[]>(["Option 1", "Option 2"]);
+  const [newOption, setNewOption] = useState("");
+
+  // Function to get field preview content
+  const getFieldPreview = (fieldType: FieldType, fieldLabel: string) => {
+    switch (fieldType) {
+      case "text":
+        return `✏️ ${fieldLabel || "Text field"}`;
+      case "number":
+        return `🔢 ${fieldLabel || "Number"} (${numberSettings.min}-${numberSettings.max})`;
+      case "date":
+        return `📅 ${fieldLabel || "Date"} [${dateSettings.format}]`;
+      case "signature":
+        return "✍️ _______________ (Signature)";
+      case "checkbox":
+        return "☑️ [ ] Checkbox";
+      case "dropdown":
+        return `⬇️ ${fieldLabel || "Select"} [${dropdownOptions.length} options]`;
+      case "textarea":
+        return "📝 [Text Area - Multiple lines]";
+      default:
+        return `${fieldLabel || "Field"}`;
+    }
+  };
 
   const addField = () => {
     if (!label) return;
+
+    // Prepare additional settings based on field type
+    const additionalSettings: any = {};
+    if (type === "number") additionalSettings.numberSettings = { ...numberSettings };
+    if (type === "date") additionalSettings.dateSettings = { ...dateSettings };
+    if (type === "dropdown") additionalSettings.options = [...dropdownOptions];
 
     const newField: Field = {
       id: crypto.randomUUID(),
       label,
       type,
-      position: { x, y }
+      position: { x, y },
+      ...additionalSettings
     };
 
     setFields(prev => [...prev, newField]);
+    
+    // Reset form
     setLabel("");
     setX(0);
     setY(0);
+    setNumberSettings({ min: 0, max: 100, step: 1 });
+    setDateSettings({ format: "MM/DD/YYYY", minDate: "", maxDate: "" });
+    setDropdownOptions(["Option 1", "Option 2"]);
+    setNewOption("");
   };
 
   const removeField = (id: string) => {
     setFields(prev => prev.filter(f => f.id !== id));
+  };
+
+  const addDropdownOption = () => {
+    if (newOption.trim()) {
+      setDropdownOptions([...dropdownOptions, newOption.trim()]);
+      setNewOption("");
+    }
+  };
+
+  const removeDropdownOption = (index: number) => {
+    setDropdownOptions(dropdownOptions.filter((_, i) => i !== index));
   };
 
   const saveBlueprint = () => {
@@ -86,7 +142,7 @@ export default function BlueprintsPage() {
               placeholder="Enter a descriptive name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              icon=" "
+              icon="📄"
               style={{ marginBottom: "20px" }}
             />
 
@@ -116,6 +172,7 @@ export default function BlueprintsPage() {
                       placeholder="Field label"
                       value={label}
                       onChange={(e) => setLabel(e.target.value)}
+                      icon="🏷️"
                     />
                   </div>
                   
@@ -129,7 +186,8 @@ export default function BlueprintsPage() {
                       fontSize: "14px",
                       color: "var(--gray-800)",
                       backgroundColor: "white",
-                      minWidth: "140px"
+                      minWidth: "140px",
+                      cursor: "pointer"
                     }}
                   >
                     {fieldTypes.map(({ value, label, icon }) => (
@@ -140,33 +198,152 @@ export default function BlueprintsPage() {
                   </select>
                 </div>
 
-                <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-                  <div style={{ display: "flex", gap: "8px", flex: 1 }}>
+                {/* Conditional Settings Based on Field Type */}
+                {type === "number" && (
+                  <div style={{ 
+                    display: "grid", 
+                    gridTemplateColumns: "1fr 1fr 1fr", 
+                    gap: "12px",
+                    marginTop: "12px",
+                    backgroundColor: "rgba(0,0,0,0.02)",
+                    padding: "16px",
+                    borderRadius: "var(--radius)"
+                  }}>
                     <Input
+                      label="Min Value"
                       type="number"
-                      placeholder="X position"
-                      value={x}
-                      onChange={(e) => setX(parseInt(e.target.value) || 0)}
-                      style={{ width: "100px" }}
+                      value={numberSettings.min}
+                      onChange={(e) => setNumberSettings({...numberSettings, min: Number(e.target.value)})}
+                      icon="↘️"
                     />
                     <Input
+                      label="Max Value"
                       type="number"
-                      placeholder="Y position"
-                      value={y}
-                      onChange={(e) => setY(parseInt(e.target.value) || 0)}
-                      style={{ width: "100px" }}
+                      value={numberSettings.max}
+                      onChange={(e) => setNumberSettings({...numberSettings, max: Number(e.target.value)})}
+                      icon="↗️"
+                    />
+                    <Input
+                      label="Step"
+                      type="number"
+                      value={numberSettings.step}
+                      onChange={(e) => setNumberSettings({...numberSettings, step: Number(e.target.value)})}
+                      icon="↕️"
                     />
                   </div>
-                  
-                  <Button
-                    onClick={addField}
-                    icon="➕"
-                    style={{ minWidth: "100px" }}
-                  >
-                    Add Field
-                  </Button>
-                </div>
+                )}
+
+                {type === "date" && (
+                  <div style={{ 
+                    display: "grid", 
+                    gridTemplateColumns: "1fr 1fr 1fr", 
+                    gap: "12px",
+                    marginTop: "12px",
+                    backgroundColor: "rgba(0,0,0,0.02)",
+                    padding: "16px",
+                    borderRadius: "var(--radius)"
+                  }}>
+                    <div>
+                      <label style={{ fontSize: "12px", color: "var(--gray-600)", marginBottom: "4px", display: "block" }}>
+                        Date Format
+                      </label>
+                      <select 
+                        value={dateSettings.format}
+                        onChange={(e) => setDateSettings({...dateSettings, format: e.target.value})}
+                        style={{
+                          width: "100%",
+                          padding: "10px",
+                          border: "1px solid var(--gray-300)",
+                          borderRadius: "var(--radius)",
+                          fontSize: "14px",
+                        }}
+                      >
+                        <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                        <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                        <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                        <option value="Month D, YYYY">Month D, YYYY</option>
+                      </select>
+                    </div>
+                    <Input
+                      label="Min Date"
+                      type="date"
+                      value={dateSettings.minDate}
+                      onChange={(e) => setDateSettings({...dateSettings, minDate: e.target.value})}
+                    />
+                    <Input
+                      label="Max Date"
+                      type="date"
+                      value={dateSettings.maxDate}
+                      onChange={(e) => setDateSettings({...dateSettings, maxDate: e.target.value})}
+                    />
+                  </div>
+                )}
+
+                {type === "dropdown" && (
+                  <div style={{ 
+                    marginTop: "12px",
+                    backgroundColor: "rgba(0,0,0,0.02)",
+                    padding: "16px",
+                    borderRadius: "var(--radius)"
+                  }}>
+                    <div style={{ display: "flex", gap: "12px", marginBottom: "12px" }}>
+                      <Input
+                        placeholder="Add new option"
+                        value={newOption}
+                        onChange={(e) => setNewOption(e.target.value)}
+                        style={{ flex: 1 }}
+                      />
+                      <Button
+                        onClick={addDropdownOption}
+                        icon="➕"
+                        variant="ghost"
+                        style={{ minWidth: "80px" }}
+                      >
+                        Add
+                      </Button>
+                    </div>
+                    
+                    <div style={{ maxHeight: "200px", overflowY: "auto" }}>
+                      {dropdownOptions.map((option, index) => (
+                        <div key={index} style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          padding: "8px 12px",
+                          backgroundColor: "white",
+                          border: "1px solid var(--gray-200)",
+                          borderRadius: "6px",
+                          marginBottom: "6px"
+                        }}>
+                          <span>{option}</span>
+                          <button
+                            onClick={() => removeDropdownOption(index)}
+                            style={{
+                              background: "none",
+                              border: "none",
+                              color: "var(--danger)",
+                              cursor: "pointer",
+                              fontSize: "14px",
+                              padding: "2px 6px"
+                            }}
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
+                
+              <Button
+                onClick={addField}
+                icon="➕"
+                style={{ width: "100%" }}
+                disabled={!label}
+              >
+                Add Field
+              </Button>
             </Card>
 
             {fields.length > 0 && (

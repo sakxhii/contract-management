@@ -711,7 +711,7 @@ export default function CreateContractPage() {
               No Template Selected
             </h3>
             <p style={{ 
-              margin: 0,
+              margin: "0 auto",
               fontSize: "14px",
               color: "var(--gray-500)",
               maxWidth: "400px",

@@ -1,4 +1,4 @@
-export type FieldType = "text" | "date" | "signature" | "checkbox";
+export type FieldType = "text" | "number" | "date" | "signature" | "checkbox" | "dropdown" | "textarea";
 
 export interface Field {
   id: string;
