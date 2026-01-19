@@ -1,6 +1,6 @@
 // src/components/Layout.tsx
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -8,99 +8,199 @@ interface LayoutProps {
 
 const Layout = ({ children }: LayoutProps) => {
   const location = useLocation();
+  const navigate = useNavigate();
   
   const isActive = (path: string) => {
-    return location.pathname === path ? 'active' : '';
+    return location.pathname === path;
   };
 
+  const navItems = [
+    { path: '/blueprints', label: 'Blueprints', icon: '📋' },
+    { path: '/create-contract', label: 'Create Contract', icon: '📝' },
+    { path: '/dashboard', label: 'Dashboard', icon: '📊' },
+  ];
+
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#f3f4f6' }}>
-      <nav style={{
-        backgroundColor: 'white',
-        borderBottom: '1px solid #e5e7eb',
-        padding: '16px 20px'
+    <div style={{ 
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+    }}>
+      {/* Floating Header */}
+      <header style={{
+        position: 'fixed',
+        top: '20px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        width: '95%',
+        maxWidth: '1200px',
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        backdropFilter: 'blur(10px)',
+        borderRadius: 'var(--radius-lg)',
+        padding: '16px 24px',
+        boxShadow: 'var(--shadow-lg)',
+        zIndex: 1000,
+        border: '1px solid rgba(255, 255, 255, 0.2)'
       }}>
         <div style={{
-          maxWidth: '1200px',
-          margin: '0 auto',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <h1 style={{ 
-              margin: 0, 
-              fontSize: '20px', 
-              fontWeight: 'bold',
-              color: '#111827'
+          <div 
+            style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '12px',
+              cursor: 'pointer'
+            }}
+            onClick={() => navigate('/')}
+          >
+            <div style={{
+              width: '40px',
+              height: '40px',
+              background: 'linear-gradient(135deg, var(--primary), var(--primary-dark))',
+              borderRadius: 'var(--radius)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '20px',
+              color: 'white',
+              fontWeight: 'bold'
             }}>
-              Contract Platform
-            </h1>
-            <span style={{
-              fontSize: '12px',
-              backgroundColor: '#e5e7eb',
-              padding: '2px 6px',
-              borderRadius: '4px',
-              color: '#6b7280'
-            }}>
-              Demo
-            </span>
+              C
+            </div>
+            <div>
+              <h1 style={{ 
+                margin: 0, 
+                fontSize: '20px', 
+                fontWeight: 'bold',
+                color: 'var(--gray-900)',
+                background: 'linear-gradient(135deg, var(--primary), var(--primary-dark))',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent'
+              }}>
+                ContractFlow
+              </h1>
+              <p style={{ 
+                margin: 0, 
+                fontSize: '12px', 
+                color: 'var(--gray-500)',
+                letterSpacing: '0.5px'
+              }}>
+                Professional Contract Management
+              </p>
+            </div>
           </div>
           
-          <div style={{ display: 'flex', gap: '24px' }}>
-            <Link 
-              to="/blueprints" 
-              style={{
-                textDecoration: 'none',
-                color: isActive('/blueprints') ? '#111827' : '#6b7280',
-                fontWeight: isActive('/blueprints') ? '600' : '400',
-                padding: '8px 0',
-                borderBottom: isActive('/blueprints') ? '2px solid #111827' : 'none'
-              }}
-            >
-              Blueprints
-            </Link>
-            <Link 
-              to="/create-contract" 
-              style={{
-                textDecoration: 'none',
-                color: isActive('/create-contract') ? '#111827' : '#6b7280',
-                fontWeight: isActive('/create-contract') ? '600' : '400',
-                padding: '8px 0',
-                borderBottom: isActive('/create-contract') ? '2px solid #111827' : 'none'
-              }}
-            >
-              Create Contract
-            </Link>
-            <Link 
-              to="/dashboard" 
-              style={{
-                textDecoration: 'none',
-                color: isActive('/dashboard') ? '#111827' : '#6b7280',
-                fontWeight: isActive('/dashboard') ? '600' : '400',
-                padding: '8px 0',
-                borderBottom: isActive('/dashboard') ? '2px solid #111827' : 'none'
-              }}
-            >
-              Dashboard
-            </Link>
-          </div>
+          <nav style={{ display: 'flex', gap: '8px' }}>
+            {navItems.map((item) => (
+              <Link 
+                key={item.path}
+                to={item.path} 
+                style={{
+                  textDecoration: 'none',
+                  padding: '10px 20px',
+                  borderRadius: 'var(--radius)',
+                  color: isActive(item.path) ? 'var(--primary-dark)' : 'var(--gray-600)',
+                  backgroundColor: isActive(item.path) ? 'var(--primary-light)' : 'transparent',
+                  fontWeight: isActive(item.path) ? '600' : '500',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  fontSize: '14px',
+                  transition: 'all 0.2s ease',
+                  border: `1px solid ${isActive(item.path) ? 'var(--primary-light)' : 'transparent'}`
+                }}
+                onMouseEnter={(e) => {
+                  if (!isActive(item.path)) {
+                    e.currentTarget.style.backgroundColor = 'var(--gray-100)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isActive(item.path)) {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                  }
+                }}
+              >
+                <span>{item.icon}</span>
+                {item.label}
+              </Link>
+            ))}
+          </nav>
         </div>
-      </nav>
+      </header>
 
-      <main style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
+      {/* Main Content */}
+      <main style={{ 
+        paddingTop: '100px',
+        paddingBottom: '40px',
+        minHeight: 'calc(100vh - 100px)'
+      }}>
         {children}
       </main>
 
+      {/* Floating Action Button for Mobile */}
+      <button
+        onClick={() => navigate('/create-contract')}
+        style={{
+          position: 'fixed',
+          bottom: '30px',
+          right: '30px',
+          width: '60px',
+          height: '60px',
+          borderRadius: '50%',
+          background: 'linear-gradient(135deg, var(--primary), var(--primary-dark))',
+          color: 'white',
+          border: 'none',
+          boxShadow: 'var(--shadow-lg)',
+          cursor: 'pointer',
+          fontSize: '24px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+          transition: 'all 0.3s ease'
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'scale(1.1)';
+          e.currentTarget.style.boxShadow = '0 20px 25px -5px rgb(0 0 0 / 0.3)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'scale(1)';
+          e.currentTarget.style.boxShadow = 'var(--shadow-lg)';
+        }}
+      >
+        📝
+      </button>
+
+      {/* Footer */}
       <footer style={{
-        marginTop: '40px',
-        padding: '20px',
+        padding: '24px',
         textAlign: 'center',
-        color: '#6b7280',
+        color: 'rgba(255, 255, 255, 0.8)',
         fontSize: '14px',
-        borderTop: '1px solid #e5e7eb'
+        backdropFilter: 'blur(10px)',
+        backgroundColor: 'rgba(0, 0, 0, 0.1)'
       }}>
-        Contract Management Platform • Built with React & TypeScript
+        <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+          <p style={{ marginBottom: '8px' }}>
+            ContractFlow • Professional Contract Management Platform
+          </p>
+          <p style={{ 
+            fontSize: '12px', 
+            opacity: 0.7,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px'
+          }}>
+            <span>Built with React & TypeScript</span>
+            <span>•</span>
+            <span>State-of-the-art UI/UX</span>
+            <span>•</span>
+            <span>Production Ready</span>
+          </p>
+        </div>
       </footer>
     </div>
   );
