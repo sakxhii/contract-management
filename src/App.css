@@ -241,3 +241,57 @@ body {
   background-size: 400% 400%;
   animation: gradientMove 15s ease infinite;
 }
+
+
+/* src/App.css - Add these styles */
+
+/* Draggable field styles */
+.draggable-field {
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.draggable-field:hover {
+  box-shadow: var(--shadow-md) !important;
+}
+
+.draggable-field:active {
+  cursor: grabbing !important;
+  box-shadow: var(--shadow-lg) !important;
+  z-index: 1000 !important;
+}
+
+/* Contract canvas grid */
+.contract-canvas {
+  background-size: 20px 20px;
+  background-image: 
+    linear-gradient(to right, var(--gray-100) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--gray-100) 1px, transparent 1px);
+}
+
+/* Signature field styles */
+.signature-field {
+  transition: all 0.3s ease;
+}
+
+.signature-field.signed {
+  border-color: var(--success) !important;
+  background-color: rgba(16, 185, 129, 0.05) !important;
+}
+
+/* Input focus states */
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1) !important;
+}
+
+/* Button hover effects */
+button:not(:disabled):hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease;
+}
+
+button:not(:disabled):active {
+  transform: translateY(0);
+}
