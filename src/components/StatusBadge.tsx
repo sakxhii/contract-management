@@ -1,29 +1,30 @@
-import type { ContractStatus } from "../types/contract";
+// src/components/StatusBadge.tsx
+import type { ContractStatus } from '../types/contract';
 
-const statusColors: Record<ContractStatus, { bg: string; text: string }> = {
-  CREATED: { bg: "#e5e7eb", text: "#111827" },
-  APPROVED: { bg: "#dbeafe", text: "#1d4ed8" },
-  SENT: { bg: "#ffedd5", text: "#9a3412" },
-  SIGNED: { bg: "#dcfce7", text: "#166534" },
-  LOCKED: { bg: "#e5e7eb", text: "#374151" },
-  REVOKED: { bg: "#fee2e2", text: "#991b1b" },
+const statusColors: Record<ContractStatus, string> = {
+  CREATED: '#3b82f6',    // blue
+  APPROVED: '#10b981',   // green
+  SENT: '#f59e0b',       // yellow
+  SIGNED: '#8b5cf6',     // purple
+  LOCKED: '#6b7280',     // gray
+  REVOKED: '#ef4444',    // red
 };
 
-export default function StatusBadge({ status }: { status: ContractStatus }) {
-  const colors = statusColors[status];
+interface StatusBadgeProps {
+  status: ContractStatus;
+}
 
+export default function StatusBadge({ status }: StatusBadgeProps) {
   return (
-    <span
-      style={{
-        padding: "4px 10px",
-        borderRadius: "999px",
-        fontSize: "12px",
-        fontWeight: 600,
-        backgroundColor: colors.bg,
-        color: colors.text,
-        display: "inline-block",
-      }}
-    >
+    <span style={{
+      padding: '4px 12px',
+      borderRadius: '9999px',
+      fontSize: '14px',
+      fontWeight: 500,
+      backgroundColor: statusColors[status] + '20',
+      color: statusColors[status],
+      border: `1px solid ${statusColors[status]}40`
+    }}>
       {status}
     </span>
   );

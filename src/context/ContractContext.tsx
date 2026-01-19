@@ -1,7 +1,14 @@
+// src/context/ContractContext.tsx
 import { createContext, useContext, useState } from "react";
 import type { Contract } from "../types/contract";
 
-const ContractContext = createContext<any>(null);
+interface ContractContextType {
+  contracts: Contract[];
+  addContract: (contract: Contract) => void;
+  updateContractStatus: (id: string, status: Contract["status"]) => void;
+}
+
+const ContractContext = createContext<ContractContextType | null>(null);
 
 export const ContractProvider = ({ children }: { children: React.ReactNode }) => {
   const [contracts, setContracts] = useState<Contract[]>([]);
@@ -25,4 +32,8 @@ export const ContractProvider = ({ children }: { children: React.ReactNode }) =>
   );
 };
 
-export const useContracts = () => useContext(ContractContext);
+export const useContracts = () => {
+  const context = useContext(ContractContext);
+  if (!context) throw new Error("useContracts must be used within ContractProvider");
+  return context;
+};
