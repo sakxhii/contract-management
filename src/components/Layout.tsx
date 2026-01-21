@@ -194,11 +194,6 @@ const Layout = ({ children }: LayoutProps) => {
             justifyContent: 'center',
             gap: '8px'
           }}>
-            <span>Built with React & TypeScript</span>
-            <span>•</span>
-            <span>State-of-the-art UI/UX</span>
-            <span>•</span>
-            <span>Production Ready</span>
           </p>
         </div>
       </footer>
