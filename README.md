@@ -2,7 +2,7 @@
 
 A modern, production-ready contract management platform built with React, TypeScript, and modern UI/UX principles.
 
-![ContractFlow Screenshot](https://via.placeholder.com/800x450/667eea/ffffff?text=ContractFlow+Demo)
+![ContractFlow Live Demo](https://contract-management-kappa.vercel.app/)
 
 ## ✨ Features
 
